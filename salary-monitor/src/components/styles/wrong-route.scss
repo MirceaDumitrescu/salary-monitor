@@ -1,0 +1,25 @@
+.wrong-route {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  height: 100%;
+  padding: 5rem;
+}
+
+.wrong-title {
+  font-size: 100px;
+}
+
+.wrong-subtitle {
+  font-size: 75px;
+  font-weight: 200;
+  line-height: 100px;
+}
+
+.bar {
+  height: 200px;
+  width: 5px;
+  background: black;
+  margin: 3rem;
+}

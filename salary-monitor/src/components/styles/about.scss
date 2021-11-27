@@ -1,0 +1,25 @@
+.features {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  padding: 3rem;
+  place-items: center;
+  font-family: "Poppins", sans-serif;
+}
+
+.about {
+  display: flex;
+  align-items: center;
+  padding: 5rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.fab {
+  font-size: 1.5rem;
+  margin: 0.5rem;
+}
+
+.tools-title {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
