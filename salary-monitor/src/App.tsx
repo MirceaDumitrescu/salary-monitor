@@ -10,7 +10,7 @@ import { ForgotPswd } from "./components/routes/password-recovery";
 import { Footer } from "./components/Footer";
 import { RegisterPage } from "./components/routes/register";
 import { WrongRoute } from "./components/routes/wrong-route";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 function App() {
   const [Login, setLogin] = useState(false);
   const [User, setUser] = useState("");
