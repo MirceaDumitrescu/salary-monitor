@@ -1,8 +1,15 @@
 import * as React from "react";
+import { useEffect } from "react";
 import "../styles/login.scss";
 export interface IAppProps {}
 
 export function AddShift(props: IAppProps) {
+  useEffect(() => {
+    let storage = localStorage.getItem("auth");
+    if (!storage) {
+      window.location.href = "/login";
+    }
+  }, []);
   return (
     <div className="loginpage">
       <h3>Add Shift</h3>

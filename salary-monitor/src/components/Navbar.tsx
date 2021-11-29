@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect } from "react";
 import {
   Navbar,
   Container,
@@ -10,9 +10,24 @@ import {
 import { Link } from "react-router-dom";
 import "./styles/homepage.scss";
 
-export interface IAppProps {}
+export function NavbarMenu(props: any) {
+  const [user, setUser] = React.useState("User profile");
+  const [auth, setAuth] = React.useState(false);
+  useEffect(() => {
+    let storage = localStorage.getItem("auth");
+    if (storage) {
+      setUser(storage);
+      setAuth(true);
+    }
+  }, []);
 
-export function NavbarMenu(props: IAppProps) {
+  const logout = () => {
+    localStorage.removeItem("auth");
+    setAuth(false);
+    setUser("User profile");
+  };
+
+  useEffect(() => {}, [props.Login]);
   return (
     <div>
       <Navbar className="navbar-body" bg="light" expand={"md"}>
@@ -33,23 +48,32 @@ export function NavbarMenu(props: IAppProps) {
             </Nav>
             <Dropdown>
               <Dropdown.Toggle variant="primary" id="dropdown-basic">
-                Username
+                {user}
               </Dropdown.Toggle>
 
               <Dropdown.Menu>
-                <Dropdown.Item>
-                  <Link to="/edit-profile" className="navlink">
-                    Edit profile
-                  </Link>
-                </Dropdown.Item>
-                <Dropdown.Item href="#/action-2" className="navlink">
+                <Link
+                  to="/dashboard"
+                  className="navlink m-2"
+                  style={{ display: auth ? "" : "none" }}
+                >
+                  Edit profile
+                </Link>
+                <Link
+                  to="/login"
+                  className="navlink m-2"
+                  onClick={logout}
+                  style={{ display: auth ? "" : "none" }}
+                >
                   Logout
-                </Dropdown.Item>
-                <Dropdown.Item>
-                  <Link to="/login" className="navlink">
-                    Login
-                  </Link>
-                </Dropdown.Item>
+                </Link>
+                <Link
+                  to="/login"
+                  className="navlink m-2"
+                  style={{ display: auth ? "none" : "" }}
+                >
+                  Login
+                </Link>
               </Dropdown.Menu>
             </Dropdown>
           </Navbar.Collapse>
@@ -79,20 +103,30 @@ export function NavbarMenu(props: IAppProps) {
                   ADD SHIFT
                 </Link>
                 <NavDropdown title="User profile" id="offcanvasNavbarDropdown">
-                  <NavDropdown.Item className="username-menu">
-                    Hello Username
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <Link className="navlink" to="/login">
-                      Login
-                    </Link>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item>
-                    <Link className="navlink" to="/login">
-                      Edit Profile
-                    </Link>
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="#action4">Logout</NavDropdown.Item>
+                  <p className=" m-2">Hello Username</p>
+                  <Link
+                    className=" m-2"
+                    to="/login"
+                    style={{ display: auth ? "none" : "" }}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    className=" m-2"
+                    to="/dasboard
+                  "
+                    style={{ display: auth ? "" : "none" }}
+                  >
+                    Edit Profile
+                  </Link>
+                  <Link
+                    className=" m-2"
+                    to="/login"
+                    onClick={logout}
+                    style={{ display: auth ? "" : "none" }}
+                  >
+                    Logout
+                  </Link>
                 </NavDropdown>
               </Nav>
             </Offcanvas.Body>

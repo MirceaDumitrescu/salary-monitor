@@ -1,9 +1,7 @@
 import * as React from "react";
-import "./styles/homepage.scss";
+import "../styles/homepage.scss";
 
-export interface IAppProps {}
-
-export function HomePage(props: IAppProps) {
+export function HomePage(props: any) {
   return (
     <div>
       <main>

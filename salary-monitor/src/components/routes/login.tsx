@@ -2,10 +2,9 @@ import * as React from "react";
 import { Link } from "react-router-dom";
 import "../styles/login.scss";
 import Snackbar from "@mui/material/Snackbar";
-import { Button, Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
-
-export interface IAppProps {}
+import { useEffect } from "react";
 
 const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   props,
@@ -14,7 +13,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export function LoginPage(props: IAppProps) {
+export function LoginPage(props: any) {
+  useEffect(() => {
+    let storage = localStorage.getItem("auth");
+    if (storage) {
+      window.location.href = "/dashboard";
+    }
+  }, []);
   const [open, setOpen] = React.useState(false);
 
   const handleClose = (reason: any) => {
@@ -29,30 +34,31 @@ export function LoginPage(props: IAppProps) {
     e.preventDefault();
 
     ////////////////////// CHECK USER INPUTS /////////////////////////
-    if (e.target.email.value === "") {
-      alert("Email is required");
+    if (e.target.username.value === "") {
+      alert("Username is required");
     } else if (e.target.password.value === "") {
       alert("Password is required");
     } else {
       ////////////////////// LOGIN /////////////////////////
-      let olddata: any = localStorage.getItem("formdata");
+      let olddata: any = localStorage.getItem(e.target.username.value);
       if (olddata == null) {
         alert("No data found");
       } else {
         let data: any = JSON.parse(olddata);
-        for (const user of data) {
-          if (
-            user.email === e.target.email.value &&
-            user.password === e.target.password.value
-          ) {
-            setOpen(true);
-            setTimeout(() => {
-              window.location.href = "/";
-            }, 1000);
-            return;
-          }
+        if (
+          data[0].username === e.target.username.value &&
+          data[0].password === e.target.password.value
+        ) {
+          localStorage.setItem("auth", e.target.username.value);
+          setOpen(true);
+          setTimeout(() => {
+            window.location.href = "/";
+          }, 1000);
+          return;
+        } else {
+          localStorage.removeItem("auth");
+          alert("Invalid username or password");
         }
-        alert("Invalid email or password");
       }
     }
   }
@@ -65,7 +71,7 @@ export function LoginPage(props: IAppProps) {
           <h2 className="login-subtitle">LOGIN</h2>
           <form className="form" onSubmit={handleSubmit}>
             <div className="inputs">
-              <input type="email" name="email" placeholder="nome@email.ro" />
+              <input type="username" name="username" placeholder="username" />
               <input type="password" name="password" placeholder="password" />
             </div>
             <p>

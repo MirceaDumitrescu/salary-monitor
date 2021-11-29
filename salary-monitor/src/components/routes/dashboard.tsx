@@ -1,10 +1,10 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 import "../styles/login.scss";
 import Snackbar from "@mui/material/Snackbar";
 import { Stack } from "@mui/material";
 import MuiAlert, { AlertProps } from "@mui/material/Alert";
-import { useEffect } from "react";
 
 export interface IAppProps {}
 
@@ -15,14 +15,15 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export function RegisterPage(props: IAppProps) {
-  const [open, setOpen] = React.useState(false);
+export function Dashboard(props: IAppProps) {
+  const [SnackSuccess, setSnackSuccess] = React.useState(false);
+  const [snackError, setSnackError] = React.useState(false);
+  const [Valid, setValid] = React.useState(false);
 
   useEffect(() => {
     let storage = localStorage.getItem("auth");
-    if (storage) {
-      // redirect user to home page
-      window.location.href = "/dashboard";
+    if (!storage) {
+      window.location.href = "/login";
     }
   }, []);
 
@@ -31,11 +32,11 @@ export function RegisterPage(props: IAppProps) {
       return;
     }
 
-    setOpen(false);
+    setSnackSuccess(false);
+    setSnackError(false);
   };
 
-  const [formData, setformData] = React.useState({
-    username: "",
+  const [formData, setformData]: any = React.useState({
     email: "",
     password: "",
     firstName: "",
@@ -44,7 +45,6 @@ export function RegisterPage(props: IAppProps) {
   });
 
   const [dataCheck, setDataCheck] = React.useState({
-    username: true,
     email: true,
     password: true,
     firstName: true,
@@ -53,7 +53,6 @@ export function RegisterPage(props: IAppProps) {
   });
 
   const [error, setError] = React.useState({
-    username: "",
     email: "",
     password: "",
     firstName: "",
@@ -61,18 +60,9 @@ export function RegisterPage(props: IAppProps) {
     age: "",
   });
 
-  function onChangeUserName(e: any) {
-    if (e.target.value.length < 6) {
-      setDataCheck({ ...dataCheck, username: false });
-      setError({ ...error, username: "Username to short!" });
-    } else {
-      setDataCheck({ ...dataCheck, username: true });
-    }
-    setformData({ ...formData, username: e.target.value });
-  }
-
   function onChangeEmail(e: any) {
     setformData({ ...formData, email: e.target.value });
+    setValid(true);
   }
 
   function onChangePassword(e: any) {
@@ -98,6 +88,7 @@ export function RegisterPage(props: IAppProps) {
       setDataCheck({ ...dataCheck, password: true });
     }
     setformData({ ...formData, password: e.target.value });
+    setValid(true);
   }
 
   function onChangefirstName(e: any) {
@@ -108,6 +99,7 @@ export function RegisterPage(props: IAppProps) {
       setDataCheck({ ...dataCheck, firstName: true });
     }
     setformData({ ...formData, firstName: e.target.value });
+    setValid(true);
   }
 
   function onChangelastName(e: any) {
@@ -118,6 +110,7 @@ export function RegisterPage(props: IAppProps) {
       setDataCheck({ ...dataCheck, lastName: true });
     }
     setformData({ ...formData, lastName: e.target.value });
+    setValid(true);
   }
 
   function onChangeAge(e: any) {
@@ -128,89 +121,50 @@ export function RegisterPage(props: IAppProps) {
       setDataCheck({ ...dataCheck, age: true });
     }
     setformData({ ...formData, age: e.target.value });
+    setValid(true);
   }
 
   function onSubmit(e: any) {
     e.preventDefault();
-    let ob = {
-      username: formData.username,
-      email: formData.email,
-      password: formData.password,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      age: formData.age,
-    };
-    let olddata: any = localStorage.getItem(ob.username);
 
-    if (
-      dataCheck.username &&
-      dataCheck.email &&
-      dataCheck.password &&
-      dataCheck.firstName &&
-      dataCheck.lastName &&
-      dataCheck.age
-    ) {
-      if (olddata == null) {
-        olddata = [];
-        olddata.push(ob);
-        localStorage.setItem(ob.username, JSON.stringify(olddata));
-        setOpen(true);
-        setTimeout(() => {
-          window.location.href = "/login";
-        }, 1000);
-      } else {
-        let oldArr = JSON.parse(olddata);
-        // check if oldArr contains the same username
-        let checkUsername = oldArr.some(
-          (el: any) => el.username === ob.username
-        );
-        let checkEmail = oldArr.some((el: any) => el.email === ob.email);
-        if (checkUsername || checkEmail) {
-          alert("Username or Password already exists!");
-        } else {
-          oldArr.push(ob);
-          localStorage.setItem(ob.username, JSON.stringify(oldArr));
-          setOpen(true);
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 1000);
-        }
+    let authData: any = localStorage.getItem("auth");
+    let userData: any = localStorage.getItem(authData);
+    let userDataObj: any = JSON.parse(userData);
+    let newData: any = {};
+
+    for (let key in formData) {
+      if (formData[key] !== "") {
+        newData[key] = formData[key];
       }
+    }
+    for (let key in userDataObj[0]) {
+      if (!newData[key]) {
+        newData[key] = userDataObj[0][key];
+      }
+    }
+    localStorage.setItem(authData, JSON.stringify([newData]));
+    if (Valid) {
+      setSnackSuccess(true);
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
+    } else {
+      setSnackError(true);
     }
   }
   return (
     <div className="loginpage">
-      <h1 className="login-title">REGISTER</h1>
-      <main className="login-page-main">
+      <h1 className="login-title">EDIT PROFILE</h1>
+      <main className="password-recovery">
         <section className="login-box">
-          <h2 className="login-subtitle">REGISTER</h2>
+          <h2 className="login-subtitle">EDIT PROFILE</h2>
           <form className="form" onSubmit={onSubmit}>
             <div className="inputs">
-              <input
-                type="text"
-                placeholder="username"
-                value={formData.username}
-                onChange={onChangeUserName}
-                required
-                className="username-input"
-                style={{
-                  border: dataCheck.username
-                    ? "1px solid black"
-                    : "1px solid red",
-                }}
-              />
-              <p
-                className="form-error username-input"
-                style={{ display: dataCheck.username ? "none" : "block" }}
-              >
-                {error.username}
-              </p>
               <input
                 type="password"
                 placeholder="password"
                 value={formData.password}
                 onChange={onChangePassword}
-                required
                 className="password-input"
                 style={{
                   border: dataCheck.password
@@ -230,7 +184,6 @@ export function RegisterPage(props: IAppProps) {
                 placeholder="Email"
                 value={formData.email}
                 onChange={onChangeEmail}
-                required
                 className="email-input"
               />
 
@@ -239,7 +192,6 @@ export function RegisterPage(props: IAppProps) {
                 placeholder="First Name"
                 value={formData.firstName}
                 onChange={onChangefirstName}
-                required
                 className="firstName-input"
                 style={{
                   border: dataCheck.firstName
@@ -259,7 +211,6 @@ export function RegisterPage(props: IAppProps) {
                 placeholder="Last Name"
                 value={formData.lastName}
                 onChange={onChangelastName}
-                required
                 className="lastName-input"
                 style={{
                   border: dataCheck.lastName
@@ -279,7 +230,6 @@ export function RegisterPage(props: IAppProps) {
                 placeholder="Age"
                 value={formData.age}
                 onChange={onChangeAge}
-                required
                 className="age-input"
                 style={{
                   border: dataCheck.age ? "1px solid black" : "1px solid red",
@@ -293,24 +243,31 @@ export function RegisterPage(props: IAppProps) {
               </p>
             </div>
 
-            <button>Register</button>
+            <button>Submit</button>
           </form>
-        </section>
-        <section className="register-box">
-          <h2 className="login-subtitle">Go back?</h2>
-          <button>
-            <Link to="/login">Login</Link>
-          </button>
         </section>
       </main>
       <Stack spacing={2} sx={{ width: "100%" }}>
-        <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Snackbar
+          open={SnackSuccess}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
           <Alert
             onClose={handleClose}
             severity="success"
             sx={{ width: "100%" }}
           >
-            Succesfully Registered!
+            Succesfully Edited information!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={snackError}
+          autoHideDuration={6000}
+          onClose={handleClose}
+        >
+          <Alert onClose={handleClose} severity="error" sx={{ width: "100%" }}>
+            You must fill at least one field!
           </Alert>
         </Snackbar>
       </Stack>
