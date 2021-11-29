@@ -2,6 +2,32 @@ import * as React from "react";
 import "../styles/homepage.scss";
 
 export function HomePage(props: any) {
+  const shiftData = localStorage.getItem("shifts");
+  const shifts = shiftData ? JSON.parse(shiftData) : [];
+  const diff =
+    Math.floor(parseInt(shifts.endTime) - parseInt(shifts.startTime)) *
+    parseInt(shifts.wage);
+
+  const listItems = shifts.map((d: any) => {
+    return (
+      <tr key={d.slug}>
+        <th scope="row" className="p-3">
+          {d.date}
+        </th>
+        <td className="p-3">{d.startTime}</td>
+        <td className="p-3">{d.endTime}</td>
+        <td className="p-3">{d.wage}</td>
+        <td className="p-3">{d.location}</td>
+        <td className="p-3">
+          {Math.floor(parseInt(d.endTime) - parseInt(d.startTime)) *
+            parseInt(d.wage)}{" "}
+          $
+        </td>
+        <td className="p-3">{d.textarea}</td>
+      </tr>
+    );
+  });
+
   return (
     <div>
       <main>
@@ -52,30 +78,7 @@ export function HomePage(props: any) {
                   </th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <th scope="row" className="p-3">
-                    1
-                  </th>
-                  <td className="p-3">Mark</td>
-                  <td className="p-3">Otto</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row" className="p-3">
-                    2
-                  </th>
-                  <td className="p-3">Mark</td>
-                  <td className="p-3">Otto</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                  <td className="p-3">@mdo</td>
-                </tr>
-              </tbody>
+              <tbody>{listItems}</tbody>
             </table>
           </div>
         </section>

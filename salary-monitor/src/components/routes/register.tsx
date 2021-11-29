@@ -21,7 +21,6 @@ export function RegisterPage(props: IAppProps) {
   useEffect(() => {
     let storage = localStorage.getItem("auth");
     if (storage) {
-      // redirect user to home page
       window.location.href = "/dashboard";
     }
   }, []);
