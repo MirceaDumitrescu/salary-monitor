@@ -64,6 +64,9 @@ export function RegisterPage(props: IAppProps) {
     if (e.target.value.length < 6) {
       setDataCheck({ ...dataCheck, username: false });
       setError({ ...error, username: "Username to short!" });
+    } else if (e.target.value.length === "auth") {
+      setDataCheck({ ...dataCheck, username: false });
+      setError({ ...error, username: "Username already exists!" });
     } else {
       setDataCheck({ ...dataCheck, username: true });
     }
@@ -100,7 +103,7 @@ export function RegisterPage(props: IAppProps) {
   }
 
   function onChangefirstName(e: any) {
-    if (e.target.value.length < 4) {
+    if (e.target.value.length < 3) {
       setDataCheck({ ...dataCheck, firstName: false });
       setError({ ...error, firstName: "Name to short!" });
     } else {
@@ -110,7 +113,7 @@ export function RegisterPage(props: IAppProps) {
   }
 
   function onChangelastName(e: any) {
-    if (e.target.value.length < 4) {
+    if (e.target.value.length < 3) {
       setDataCheck({ ...dataCheck, lastName: false });
       setError({ ...error, lastName: "Name to short!" });
     } else {
@@ -149,7 +152,7 @@ export function RegisterPage(props: IAppProps) {
       dataCheck.lastName &&
       dataCheck.age
     ) {
-      if (olddata == null) {
+      if (olddata === null) {
         olddata = [];
         olddata.push(ob);
         localStorage.setItem(ob.username, JSON.stringify(olddata));

@@ -14,6 +14,8 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(function Alert(
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+const authUsername: any = localStorage.getItem("auth");
+
 export function AddShift(props: IAppProps) {
   useEffect(() => {
     let storage = localStorage.getItem("auth");
@@ -68,7 +70,7 @@ export function AddShift(props: IAppProps) {
     const today = new Date();
     const date = new Date(e.target.value);
 
-    const shiftStorage: any = localStorage.getItem("shifts");
+    const shiftStorage: any = localStorage.getItem(`${authUsername}-shifts`);
     const shiftData: any = JSON.parse(shiftStorage);
     if (shiftData) {
       //check if shiftData.date is already in localStorage
@@ -144,10 +146,23 @@ export function AddShift(props: IAppProps) {
   function onChangeSlug(e: any) {
     const regex = /\d/;
     const doesItHaveNumber = regex.test(e.target.value);
+    const shiftData: any = localStorage.getItem(`${authUsername}-shifts`);
+    const parsedData: any = JSON.parse(shiftData);
+    const allSlugs: any = [];
+    if (shiftData) {
+      for (let i = 0; i < parsedData.length; i++) {
+        allSlugs.push(parsedData[i].slug);
+      }
+    } else {
+      allSlugs.push("");
+    }
+
     if (doesItHaveNumber) {
       setError({ ...error, slug: "The slug should only contain letters" });
     } else if (e.target.value.length < 3) {
       setError({ ...error, slug: "The slug should be at least 3 characters" });
+    } else if (allSlugs.includes(e.target.value)) {
+      setError({ ...error, slug: "The slug is already taken" });
     } else {
       setError({ ...error, slug: "" });
     }
@@ -169,13 +184,19 @@ export function AddShift(props: IAppProps) {
       dataCheck.slug &&
       dataCheck.textarea
     ) {
-      const shiftStorage: any = localStorage.getItem("shifts");
+      const shiftStorage: any = localStorage.getItem(`${authUsername}-shifts`);
       if (!shiftStorage) {
-        localStorage.setItem("shifts", JSON.stringify([formData]));
+        localStorage.setItem(
+          `${authUsername}-shifts`,
+          JSON.stringify([formData])
+        );
       } else {
         const shiftData: any = JSON.parse(shiftStorage);
         shiftData.push(formData);
-        localStorage.setItem("shifts", JSON.stringify(shiftData));
+        localStorage.setItem(
+          `${authUsername}-shifts`,
+          JSON.stringify(shiftData)
+        );
       }
       setTimeout(() => {
         window.location.href = "/";

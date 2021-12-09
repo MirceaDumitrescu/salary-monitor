@@ -1,8 +1,10 @@
 import * as React from "react";
 import "../styles/homepage.scss";
 
+const authUsername: any = localStorage.getItem("auth");
+
 export function HomePage(props: any) {
-  const shiftData = localStorage.getItem("shifts");
+  const shiftData = localStorage.getItem(`${authUsername}-shifts`);
   const shifts = shiftData ? JSON.parse(shiftData) : [];
   let filteredShifts: any = [];
   const [highestProfit, setHighestProfit] = React.useState("");
